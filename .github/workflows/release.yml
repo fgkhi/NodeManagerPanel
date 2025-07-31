@@ -1,0 +1,27 @@
+name: Build Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore dependencies
+        run: dotnet restore src/NodeManagerPanel.sln
+      - name: Build
+        run: dotnet build src/NodeManagerPanel.sln --configuration Release
+      - name: Publish
+        run: dotnet publish src/NodeManagerPanel/NodeManagerPanel.csproj -c Release -o release
+      - name: Upload Release
+        uses: actions/upload-artifact@v3
+        with:
+          name: NodeManagerPanel
+          path: release
